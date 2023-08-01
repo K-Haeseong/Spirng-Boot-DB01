@@ -1,16 +1,23 @@
 package hello.jdbc.repository;
 
-import hello.jdbc.connection.DBConnectionUtil;
+import com.zaxxer.hikari.HikariDataSource;
 import hello.jdbc.domain.Member;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.support.JdbcUtils;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.NoSuchElementException;
 
 
 @Slf4j
-public class MemberRepositoryV0 {
+public class MemberRepositoryV1 {
 
+    private final DataSource dataSource;
+
+    public MemberRepositoryV1(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     // 저장
     public Member save(Member member) throws SQLException {
@@ -118,45 +125,21 @@ public class MemberRepositoryV0 {
         } finally {
             close(con, pstmt, null);
         }
-
-
     }
 
 
     // 리소스 정리
     private void close(Connection con, Statement stmt, ResultSet rs)  {
-
-        if(rs!=null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-
-            if(stmt!=null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-
-        if(con!=null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-                log.info("error", e);
-            }
-        }
-
+        JdbcUtils.closeResultSet(rs);
+        JdbcUtils.closeStatement(stmt);
+        JdbcUtils.closeConnection(con);
     }
 
-
-
-
-    private Connection getConnection() {
-        return DBConnectionUtil.getConnection();
+    // 커넥션 얻기
+    private Connection getConnection() throws SQLException {
+        Connection con = dataSource.getConnection();
+        log.info("get connection={}, class={}", con, con.getClass());
+        return con;
     }
 
 }
