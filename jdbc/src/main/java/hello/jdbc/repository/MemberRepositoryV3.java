@@ -11,11 +11,11 @@ import java.util.NoSuchElementException;
 
 
 @Slf4j
-public class MemberRepositoryV3_1 {
+public class MemberRepositoryV3 {
 
     private final DataSource dataSource;
 
-    public MemberRepositoryV3_1(DataSource dataSource) {
+    public MemberRepositoryV3(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

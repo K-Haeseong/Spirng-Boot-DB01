@@ -16,7 +16,11 @@ import static hello.jdbc.connection.ConnectionConst.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class MemberServiceV3_1Test {
+/**
+ * 트랜잭션 - 트랜잭션 템플릿
+ */
+
+class MemberServiceV3_2Test {
 
     private static final String MEMBER_A = "memberA";
     private static final String MEMBER_B = "memberB";
@@ -24,7 +28,7 @@ class MemberServiceV3_1Test {
 
 
     private MemberRepositoryV3 memberRepository;
-    private MemberServiceV3_1 memberService;
+    private MemberServiceV3_2 memberService;
     private PlatformTransactionManager transactionManager;
 
     @BeforeEach
@@ -32,7 +36,7 @@ class MemberServiceV3_1Test {
         DriverManagerDataSource dataSource = new DriverManagerDataSource(URL, USERNAME, PASSWORD);
         memberRepository = new MemberRepositoryV3(dataSource);
         transactionManager = new DataSourceTransactionManager(dataSource);
-        memberService = new MemberServiceV3_1(memberRepository, transactionManager);
+        memberService = new MemberServiceV3_2(transactionManager, memberRepository);
     }
 
     @AfterEach
