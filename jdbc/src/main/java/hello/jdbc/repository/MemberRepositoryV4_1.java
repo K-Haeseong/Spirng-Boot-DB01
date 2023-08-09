@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  * 예외 누수 문제 해결
  * 체크 예외를 런타임 예외로 변경
  * MemberRepository 인터페이스 사용
- * throws SQLException 제거
+ * throws SQLException 제거 - 내가 만든 MyDbException 으로 처리
  */
 
 @Slf4j

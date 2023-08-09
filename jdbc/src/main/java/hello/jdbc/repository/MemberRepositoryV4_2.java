@@ -5,6 +5,7 @@ import hello.jdbc.repository.ex.MyDbException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -12,19 +13,19 @@ import java.util.NoSuchElementException;
 
 
 /**
- * 예외 누수 문제 해결
- * 체크 예외를 런타임 예외로 변경
- * MemberRepository 인터페이스 사용
- * throws SQLException 제거
- */
+ * SQLExceptionTranslator 추가
+ * */
 
 @Slf4j
 public class MemberRepositoryV4_2 implements MemberRepository {
 
     private final DataSource dataSource;
+    private final SQLErrorCodeSQLExceptionTranslator exTranslator;
 
     public MemberRepositoryV4_2(DataSource dataSource) {
+
         this.dataSource = dataSource;
+        this.exTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
     }
 
     // 저장
@@ -44,11 +45,10 @@ public class MemberRepositoryV4_2 implements MemberRepository {
             pstmt.executeUpdate();
             return member;
         } catch (SQLException e) {
-            throw new MyDbException(e);
+            throw exTranslator.translate("insert", sql, e);
         } finally {
             close(con,pstmt,null);
         }
-
     } // save
 
 
@@ -103,7 +103,7 @@ public class MemberRepositoryV4_2 implements MemberRepository {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new MyDbException(e);
+            throw exTranslator.translate("update", sql, e);
         } finally {
             close(con, pstmt, null);
         }
@@ -126,7 +126,7 @@ public class MemberRepositoryV4_2 implements MemberRepository {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new MyDbException(e);
+            throw exTranslator.translate("delete", sql, e);
         } finally {
             close(con, pstmt, null);
         }

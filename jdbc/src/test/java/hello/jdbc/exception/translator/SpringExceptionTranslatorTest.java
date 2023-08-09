@@ -58,10 +58,10 @@ public class SpringExceptionTranslatorTest {
         } catch (SQLException e) {
             assertThat(e.getErrorCode()).isEqualTo(42122); // //org.h2.jdbc.JdbcSQLSyntaxErrorException
 
-            SQLErrorCodeSQLExceptionTranslator translator =
+            SQLErrorCodeSQLExceptionTranslator exTranslator =
                     new SQLErrorCodeSQLExceptionTranslator(dataSource);
 
-            DataAccessException resultEx = translator.translate("select", sql, e);
+            DataAccessException resultEx = exTranslator.translate("select", sql, e);
             log.info("resultEx", resultEx);
             assertThat(resultEx.getClass()).isEqualTo(BadSqlGrammarException.class);
         }
